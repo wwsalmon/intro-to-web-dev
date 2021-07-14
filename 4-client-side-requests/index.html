@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    <style>
+        body {
+            max-width: 500px;
+            margin: 32px auto;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>4. Client-side dynamic website/app</h1>
+    <p>Here, Javascript's <code>fetch</code> API is used to make requests to the server, both for fetching and posting data.</p>
+    <p>This is how modern web apps, like those written in React, generally work. No new page loads or refreshes are necessary for data to be loaded in.</p>
+    <hr/>
+    <h2>Todo list</h2>
+    <input type="text" id="textfield"/>
+    <button id="addbutton">Add item</button>
+    <ul id="list"/>
+    <script>
+        const addButton = document.getElementById("addbutton");
+        const textInput = document.getElementById("textfield");
+        const listContainer = document.getElementById("list");
+
+        addButton.addEventListener("click", () => {
+            const addString = textInput.value;
+            fetch(`http://localhost:8080/${encodeURIComponent(addString)}`, {
+                method: "POST",
+            }).then(() => {
+                textInput.value = "";
+                onLoad();
+            });
+        });
+
+        function onLoad() {
+            listContainer.innerHTML = "";
+
+            fetch("http://localhost:8080/items").then(res => res.json()).then(data => {
+                for (let item of data) {
+                    const appendItem = document.createElement("li");
+                    appendItem.innerText = item.name;
+                    listContainer.append(appendItem);
+                }
+            });
+        }
+
+        onLoad();
+    </script>
+</body>
+</html>
